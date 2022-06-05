@@ -1,0 +1,99 @@
+_G.punch = false
+_G.stamina = false
+
+_G.money = false
+_G.fame = false
+
+-- Variables
+local Player = game.Players.LocalPlayer
+local Style = "Wrestling"
+local Stamina = Player.Stamina
+local MaxStamina = Player.PlayerGui:FindFirstChild("Fighter Card").Stamina
+local virtualUser = game:GetService('VirtualUser')
+
+-- money
+while wait() and _G.money do
+    if Player.Character and Player.Character:FindFirstChild("Torso") then
+        workspace:FindFirstChild("Kazuo Yamashita").HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.Torso.CFrame + Vector3.new(2.25,0,0)
+        fireclickdetector(workspace:FindFirstChild("Kazuo Yamashita").ClickDetector,1)
+    end
+    if workspace.Camera then
+        workspace.Camera.CameraType = "Track"
+    end
+    if game.Players.LocalPlayer.Character:FindFirstChild("Box") then
+        game.Players.LocalPlayer.Character.Box:Destroy()
+    end
+    
+    workspace.Deliver2.Label.Enabled = true
+    if Player.PlayerGui:FindFirstChild("TrainerGui") then
+        game:GetService("ReplicatedStorage").Quest:FireServer("Delivery2")
+        
+        game:GetService("Players").LocalPlayer.PlayerGui.TrainerGui.TextFrame.YesBut.Yes:FireServer(Player)
+    end
+end
+-- money end
+
+-- fame
+function respawn(plr)
+    local char = plr.Character
+    if char:FindFirstChildOfClass("Humanoid") then char:FindFirstChildOfClass("Humanoid"):ChangeState(15) end
+    char:ClearAllChildren()
+    local newChar = Instance.new("Model")
+    newChar.Parent = workspace
+    plr.Character = newChar
+    wait()
+    plr.Character = char
+    newChar:Destroy()
+end
+
+while wait() and _G.fame do
+    if Player.Character and Player.Character:FindFirstChild("Torso") then
+        workspace:FindFirstChild("Assasination Quest").HumanoidRootPart.CFrame = Player.Character.Torso.CFrame + Vector3.new(2.25,0,0)
+        fireclickdetector(workspace:FindFirstChild("Assasination Quest").ClickDetector,1)
+    end
+    wait()
+    if workspace.Camera then
+        workspace.Camera.CameraType = "Track"
+    end
+    if Player.PlayerGui:FindFirstChild("TrainerGui") then
+        Player.PlayerGui.TrainerGui.TextFrame.YesBut.Yes:FireServer(Player)
+        wait()
+        respawn(Player)
+    end
+end
+-- fame end
+
+-- stamina 
+if _G.stamina then
+    Player.Character.Torso.Anchored = true
+else 
+    Player.Character.Torso.Anchored = false
+end
+virtualUser:CaptureController()
+
+while wait(1) do
+    if _G.stamina then
+        if Stamina.Value >= tonumber(MaxStamina.Text:match("%d+")) then
+            print("Q")
+            virtualUser:SetKeyDown('0x77') -- This will press the key you put between the apostrophes
+            wait()
+        elseif Stamina.Value <= tonumber(MaxStamina.Text:match("%d+"))/16 then
+            print("F")
+            virtualUser:SetKeyUp('0x77')
+        end
+        game:GetService("ReplicatedStorage").RemoteEvents.Sprint:FireServer("Began")
+    end
+end
+-- stamina end
+
+-- boxing
+while wait() and _G.punch do
+    if not Player.Backpack:FindFirstChild("Gloves") then
+        fireclickdetector(workspace.Glovess.ClickDetector,1)
+    elseif not Player.Character:FindFirstChild("GlovesDuration") then
+        Player.Backpack.Gloves.Main.Function:FireServer("Removal", Player.Character.HumanoidRootPart.Position, "Left")
+    elseif Player.Character:FindFirstChild("GlovesDuration") and Player.Character.GlovesDuration.Value >= 0 then
+        Player.Backpack:FindFirstChild(Style).Main.Function:FireServer("Combat", Player.Character.HumanoidRootPart.Position, "Left")
+    end
+end
+-- boxing end
