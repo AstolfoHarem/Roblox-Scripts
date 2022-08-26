@@ -1,0 +1,313 @@
+--|| Services ||--
+local Players = game:GetService("Players")
+
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local Debris = game:GetService("Debris")
+
+--|| Variables ||--
+local Player = Players.LocalPlayer
+local vu = game:GetService("VirtualUser")
+
+repeat wait() until game:IsLoaded()
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Idled)) do
+v:Disable()
+end
+
+--|| Debounces ||--
+local KeyBind = Enum.KeyCode.H -- farming
+local KeyBind2 = Enum.KeyCode.J -- masks/hamon
+local KeyBind3 = Enum.KeyCode.K -- bring all items
+local KeyBind4 = Enum.KeyCode.L -- select all items
+local KeyBind5 = Enum.KeyCode.C 
+local KeyBind6 = Enum.KeyCode.V -- elder arrow farm
+local KeyBind7 = Enum.KeyCode.B -- change farming type
+local KeyBind8 = Enum.KeyCode.P -- autoprestige
+
+local Teleporting = false
+local mob
+local prestiging = false
+
+--|| Functions ||--
+function GetMob()
+	local level = game.Players.LocalPlayer.Data.Level.Value
+	if level == 100 and _G.prestige == true and not prestiging then 
+	   prestiging = true
+	   game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Events.Prestige:InvokeServer()
+	   mob = "Thug"
+	   repeat
+	       repeat wait() until Player.PlayerGui:FindFirstChild("CoreGUI")
+	       wait()
+	   until level == 1
+	   mob = "Thug"
+	   prestiging = false
+	   wait(10)
+	elseif level >= 80 then 
+		mob = "Golem"
+	elseif level >= 65 then 
+        mob = "Vampire"
+	elseif level >= 45 then
+		mob = "Zombie"
+	elseif level >= 30 then 
+		mob = "Werewolf"
+	elseif level >= 20 then
+		mob = "🦍😡💢"
+	elseif level >=10 then
+		mob = "Brute"
+	elseif level >= 1 then
+		mob = "Thug"
+	end
+end
+function Effect(Color)
+    for i = 1, 7 do
+        local Character = Player.Character or Player.CharacterAdded:Wait()
+		local beam = Instance.new("Part")
+		local mesh = Instance.new("SpecialMesh")
+		beam.CastShadow = false
+		beam.Massless = true
+		beam.CanCollide = false
+		beam.CanTouch = false
+		beam.Anchored = false
+		mesh.MeshType = "Sphere"
+		mesh.Parent = beam
+		beam.Size = Vector3.new(1.5,1.5,1.5)
+		beam.Material = "Neon"
+		beam.BrickColor = BrickColor.new(Color)
+		beam.Parent = game.Workspace
+		local RandomTingz = math.random(-360,360)
+		beam.CFrame = Character:WaitForChild("HumanoidRootPart").CFrame
+		local weld = Instance.new("WeldConstraint")
+		weld.Part0 = beam
+		weld.Part1 = Character:WaitForChild("HumanoidRootPart")
+		weld.Parent = beam
+		beam.Orientation = Vector3.new(RandomTingz,RandomTingz ,RandomTingz)
+		local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+		local tw1 = TweenService:Create(beam, tweenInfo,  {Size = Vector3.new(0,15,0),Transparency = 1})
+		tw1:Play()
+		Debris:AddItem(beam,0.5)			               
+	end
+end
+function TakeStand(char)
+    coroutine.wrap(function()
+    if _G.stand and char~= nil and char:FindFirstChild("Status") and char.Status.StandOut.Value == true then
+		game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Events.SummonStand:InvokeServer()
+    end
+    end)()
+end
+
+UserInputService.InputBegan:Connect(function(Input, Typing)
+	if Input.KeyCode == KeyBind and not Typing then
+		if _G.farm  then
+			_G.farm = false
+			Effect("Really red")
+		else 
+			_G.farm = true
+			Effect("Lime green")
+		end
+		print(_G.farm)
+	elseif Input.KeyCode == KeyBind2 and not Typing then
+	    Effect("Bright blue")
+	    for _,v in pairs(workspace:GetDescendants()) do
+            if v.ClassName == "ClickDetector" and v.Parent ~= nil then
+                if v.Parent.Name == "Mask" or v.Parent.Parent.Name == "Ceasers" or v.Parent.Name == "Meteor" then
+                    fireclickdetector(v)
+                end
+            end
+        end
+    elseif Input.KeyCode == KeyBind3 and not Typing and game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Health ~= 0 then
+        Effect("Bright yellow")
+        for _,v in pairs(workspace:GetChildren()) do
+            if v.ClassName == "Tool" and v:FindFirstChild("Handle") then
+                local Character = Player.Character or Player.CharacterAdded:Wait()
+                v.Handle.CFrame = Character:FindFirstChild("HumanoidRootPart").CFrame
+                wait()
+            end
+        end
+    elseif Input.KeyCode == KeyBind4 and not Typing then
+        Effect("White")
+        for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+            if v:IsA("Tool") then
+                v.Parent = game.Players.LocalPlayer.Character
+            end
+        end
+    elseif Input.KeyCode == KeyBind5 and not Typing then
+        -- dash
+        Effect("Mulberry")
+    elseif Input.KeyCode == KeyBind6 and not Typing then
+        if _G.elder  then
+			_G.elder = false
+			Effect("White")
+		else 
+			_G.elder = true
+			Effect("Black")
+		end
+    elseif Input.KeyCode == KeyBind7 and not Typing then
+        if _G.levelfarm  then
+			_G.levelfarm = false
+			Effect("Really red")
+		else 
+			_G.levelfarm = true
+			Effect("Lime green")
+		end
+		print(_G.levelfarm)
+	elseif Input.KeyCode == KeyBind8 and not Typing then
+		if _G.prestige  then
+			_G.prestige = false
+			Effect("Really red")
+		else 
+			_G.prestige = true
+			Effect("Lime green")
+		end
+    end
+end)
+coroutine.wrap(function()
+    game:GetService("RunService").Stepped:connect(function()
+        coroutine.wrap(function()
+        if _G.farm then 
+            if game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+                game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+            end
+        end
+        end)()
+    end)
+end)()
+while Wait() do
+	if not _G.levelfarm and _G.farm and not Teleporting then
+		for _,v in pairs(workspace:GetDescendants()) do
+            local Character = Player.Character or Player.CharacterAdded:Wait()
+            local Root = Character:FindFirstChild("HumanoidRootPart") or  Character:WaitForChild("HumanoidRootPart") or nil
+            local Hum = Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid") or nil
+            if _G.elder then 
+                for _,v in pairs(workspace:GetDescendants()) do
+                    if v.ClassName == "ClickDetector" and v.Parent ~= nil then
+                        if v.Parent.Name == "Meteor" and v.Parent:FindFirstChild("Rock") and v.Parent.Rock.Transparency ~= 1 then
+                            fireclickdetector(v)
+                        end
+                    end
+                end
+            end
+			if _G.farm and not Teleporting and not _G.levelfarm and Hum.Health ~= 0 and Hum.WalkSpeed ~= 0 and v ~= nil and v.ClassName == "Tool" and v.Parent ~= Character and v.Parent.ClassName == "Model" and v:FindFirstChild("Handle") then
+				Teleporting = true
+				local stateType = Enum.HumanoidStateType
+                Hum:SetStateEnabled(stateType.FallingDown, false)
+                Hum:SetStateEnabled(stateType.Ragdoll, false)
+				local num = (Player:DistanceFromCharacter(v.Handle.Position))/(_G.speed*10)
+				local Tween = TweenService:Create(Root, TweenInfo.new(num,Enum.EasingStyle.Quad), {CFrame = CFrame.new(v.Handle.Position) + Vector3.new(0,1.3,0)})
+				Tween:Play()
+				TakeStand(Character)
+				Tween.Completed:Wait()
+				Tween:Destroy()
+				Root.RotVelocity = Vector3.new()
+                Root.Velocity = Vector3.new()
+				Tween:Destroy()
+				wait(_G.delay)
+                Root.RotVelocity = Vector3.new()
+                Root.Velocity = Vector3.new()
+				Teleporting = false
+			end
+		end
+		wait(15)
+	end
+-- level farm
+	if _G.levelfarm and _G.farm and Player.Character~= nil then
+	    local Character = Player.Character or Player.CharacterAdded:Wait() or nil
+        local Root = Character:FindFirstChild("HumanoidRootPart") or  Character:WaitForChild("HumanoidRootPart") or nil
+        local Hum = Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid") or nil
+		local enemy
+		local questfolder = Player.PlayerGui.Quest.Quest or nil
+		GetMob()
+		if mob == "🦍😡💢" then enemy = "🦍"
+			elseif mob == "Golem" then enemy = "HamonGolem"
+			elseif mob ~= "🦍😡💢" and mob ~= "Golem" then enemy = mob
+		end
+		if questfolder ~= nil and questfolder:FindFirstChildWhichIsA("Frame") then 
+			if not string.find(questfolder:FindFirstChildWhichIsA("Frame").Name,mob) then
+				for _,v in pairs(workspace:GetChildren()) do
+				    local var = mob.." Quest"
+					if v~= nil and v:FindFirstChild("HumanoidRootPart") and string.find(v.Name, var) and Character ~= nil and Hum ~= nil and Root ~= nil then
+					    local Character = Player.Character or Player.CharacterAdded:Wait() or Character
+                        local Root = Character:FindFirstChild("HumanoidRootPart") or  Character:WaitForChild("HumanoidRootPart") or Root
+						Teleporting = true
+			    		local num = (Player:DistanceFromCharacter(v.HumanoidRootPart.Position))/(_G.speed*10)
+			    		local Tween = TweenService:Create(Root, TweenInfo.new(num,Enum.EasingStyle.Quad), {CFrame = v.HumanoidRootPart.CFrame* CFrame.new(0,5,0) * CFrame.Angles(math.rad(-90),0,0)})
+						Tween:Play()
+						TakeStand(Character)
+						Tween.Completed:Wait()
+						Tween:Destroy()
+						fireclickdetector(v:FindFirstChild("ClickDetector"))
+						wait(2)
+						fireclickdetector(v:FindFirstChild("ClickDetector"))
+						Teleporting = false
+					end
+				end
+			end
+		elseif questfolder ~= nil and not questfolder:FindFirstChildWhichIsA("Frame") and not Teleporting and _G.farm and _G.levelfarm then
+			for _,v in pairs(workspace:GetChildren()) do
+			    local var = mob.." Quest"
+				if v~= nil and v:FindFirstChild("HumanoidRootPart") and string.find(v.Name, var) and Character ~= nil and Hum ~= nil and Root ~= nil then
+				    local Character = Player.Character or Player.CharacterAdded:Wait() or Character
+                    local Root = Character:FindFirstChild("HumanoidRootPart") or  Character:WaitForChild("HumanoidRootPart") or Root
+			    	Teleporting = true
+			    	local num = (Player:DistanceFromCharacter(v.HumanoidRootPart.Position))/(_G.speed*10)
+			    	local Tween = TweenService:Create(Root, TweenInfo.new(num,Enum.EasingStyle.Quad), {CFrame = v.HumanoidRootPart.CFrame* CFrame.new(0,5,0) * CFrame.Angles(math.rad(-90),0,0)})
+					Tween:Play()
+					TakeStand(Character)
+					Tween.Completed:Wait()
+					Tween:Destroy()
+					fireclickdetector(v:FindFirstChild("ClickDetector"))
+					wait(2)
+					fireclickdetector(v:FindFirstChild("ClickDetector"))
+					Teleporting = false
+				end
+			end
+		end
+		for _,v in pairs(workspace:GetChildren()) do
+			local Character = Player.Character or Player.CharacterAdded:Wait() or Character
+            local Root = Character:FindFirstChild("HumanoidRootPart") or  Character:WaitForChild("HumanoidRootPart") or Root
+            local Hum = Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid") or Hum
+			if v~= nil and v.Name == enemy and v:FindFirstChild("Humanoid") and v.Humanoid ~= nil and v.Humanoid.Health ~= 0 and _G.farm and not Teleporting and _G.levelfarm and Character ~= nil and Hum ~= nil and Root ~= nil and Hum.Health ~= 0 and Hum.WalkSpeed ~= 0 and questfolder:FindFirstChildWhichIsA("Frame") then
+			    Teleporting = true and not questfolder:FindFirstChildWhichIsA("Frame")
+			    local num = (Player:DistanceFromCharacter(v.HumanoidRootPart.Position))/(_G.speed*10)
+			    local Tween = TweenService:Create(Root, TweenInfo.new(num,Enum.EasingStyle.Quad), {CFrame = v.HumanoidRootPart.CFrame* CFrame.new(0,_G.distance,0) * CFrame.Angles(math.rad(-90),0,0)})
+				Tween:Play()
+				TakeStand(Character)
+				Tween.Completed:Wait()
+				Tween:Destroy()
+				coroutine.wrap(function()
+				    if _G.stand and Character~= nil and Character:FindFirstChild("Status") and Character.Status.StandOut.Value == false then
+					    game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Events.SummonStand:InvokeServer()
+					end
+				end)()
+			    repeat
+			        RunService.RenderStepped:Wait()
+			        coroutine.wrap(function()
+			            if v:FindFirstChild("HumanoidRootPart") then
+				            Root.CFrame = v.HumanoidRootPart.CFrame* CFrame.new(0,_G.distance,0) * CFrame.Angles(math.rad(-90),0,0)
+					    end
+					end)()
+					coroutine.wrap(function()
+					    if game.Players.LocalPlayer.PlayerGui:FindFirstChild("CoreGUI") then
+						    if _G.barrage then
+							    wait(10)
+							    game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Events.Barrage:InvokeServer()
+						    end
+						    if _G.heavy then
+							    wait(10)
+							    game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Events.Heavy:InvokeServer()
+						    end
+						end
+					end)()
+					coroutine.wrap(function()
+					    game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+					    game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Events.Punch:InvokeServer()
+					    game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Stats.Stats.Stats:InvokeServer("Strength", "1")
+					end)()
+			    until Character == nil or Root == nil or Hum == nil or v == nil or Hum.Health == 0 or v.Humanoid == nil or v.Humanoid.Health == 0 or _G.levelfarm == false or _G.farm == false or not questfolder:FindFirstChildWhichIsA("Frame")
+			    Teleporting = false 
+		    end
+		end
+		wait(3)
+	end
+end
