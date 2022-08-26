@@ -175,19 +175,19 @@ coroutine.wrap(function()
 end)()
 while Wait() do
 	if not _G.levelfarm and _G.farm and not Teleporting then
+	    if _G.elder then 
+            for _,v in pairs(workspace:GetDescendants()) do
+                if v.ClassName == "ClickDetector" and v.Parent ~= nil then
+                    if v.Parent.Name == "Meteor" and v.Parent:FindFirstChild("Rock") and v.Parent.Rock.Transparency ~= 1 then
+                        fireclickdetector(v)                        
+                    end
+                end
+            end
+        end
 		for _,v in pairs(workspace:GetDescendants()) do
             local Character = Player.Character or Player.CharacterAdded:Wait()
             local Root = Character:FindFirstChild("HumanoidRootPart") or  Character:WaitForChild("HumanoidRootPart") or nil
             local Hum = Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid") or nil
-            if _G.elder then 
-                for _,v in pairs(workspace:GetDescendants()) do
-                    if v.ClassName == "ClickDetector" and v.Parent ~= nil then
-                        if v.Parent.Name == "Meteor" and v.Parent:FindFirstChild("Rock") and v.Parent.Rock.Transparency ~= 1 then
-                            fireclickdetector(v)
-                        end
-                    end
-                end
-            end
 			if _G.farm and not Teleporting and not _G.levelfarm and Hum.Health ~= 0 and Hum.WalkSpeed ~= 0 and v ~= nil and v.ClassName == "Tool" and v.Parent ~= Character and v.Parent.ClassName == "Model" and v:FindFirstChild("Handle") then
 				Teleporting = true
 				local stateType = Enum.HumanoidStateType
