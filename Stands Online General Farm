@@ -33,7 +33,7 @@ local prestiging = false
 --|| Functions ||--
 function GetMob()
     	local levelui = game.Players.LocalPlayer.PlayerGui:WaitForChild("CoreGUI"):WaitForChild("Frame"):WaitForChild("EXPBAR"):WaitForChild("TextLabel")
-    	local level = levelui.Text:match("%d+")
+    	local level = tonumber(levelui.Text:match("%d+"))
     	if level == 100 and _G.prestige == true and not prestiging then 
     	   prestiging = true
     	   game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Events.Prestige:InvokeServer()
