@@ -32,7 +32,6 @@ local prestiging = false
 
 --|| Functions ||--
 function GetMob()
-    pcall(function()
     	local levelui = game.Players.LocalPlayer.PlayerGui:WaitForChild("CoreGUI"):WaitForChild("Frame"):WaitForChild("EXPBAR"):WaitForChild("TextLabel")
     	local level = levelui.Text:match("%d+")
     	if level == 100 and _G.prestige == true and not prestiging then 
@@ -61,7 +60,6 @@ function GetMob()
     	elseif level >= 1 then
     		mob = "Thug"
     	end
-	end)
 end
 function Effect(Color)
     for i = 1, 7 do
