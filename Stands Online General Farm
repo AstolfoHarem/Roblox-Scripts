@@ -10,6 +10,7 @@ local Debris = game:GetService("Debris")
 --|| Variables ||--
 local Player = Players.LocalPlayer
 local vu = game:GetService("VirtualUser")
+mob = "Thug"
 
 repeat wait() until game:IsLoaded()
 for i,v in pairs(getconnections(game.Players.LocalPlayer.Idled)) do
