@@ -16,7 +16,8 @@ repeat wait() until game:IsLoaded()
 for i,v in pairs(getconnections(game.Players.LocalPlayer.Idled)) do
 v:Disable()
 end
-
+setfflag("HumanoidParallelRemoveNoPhysics", "False")
+setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
 --|| Debounces ||--
 local KeyBind = Enum.KeyCode.H -- farming
 local KeyBind2 = Enum.KeyCode.J -- masks/hamon
