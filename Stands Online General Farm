@@ -39,15 +39,10 @@ function GetMob()
     	local level = tonumber(levelui.Text:match("%d+"))
     	if level == 100 and _G.prestige == true and not prestiging then 
     	   prestiging = true
-    	   game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.CoreGUI.Events.Prestige:InvokeServer()
+    	   Player.PlayerGui.CoreGUI.Events.Prestige:InvokeServer()
     	   mob = "Thug"
-    	   repeat
-    	       repeat wait() until Player.PlayerGui:FindFirstChild("CoreGUI")
-    	       wait()
-    	   until level == 1
-    	   mob = "Thug"
+	   task.wait(10)
     	   prestiging = false
-    	   wait(10)
     	elseif level >= 80 then 
     		mob = "Golem"
     	elseif level >= 65 then 
@@ -62,6 +57,8 @@ function GetMob()
     		mob = "Brute"
     	elseif level >= 1 then
     		mob = "Thug"
+	else
+		mob = "Thug"
     	end
 	end)
 end
